@@ -63,8 +63,6 @@ class ListBoxRowWithData(Gtk.ListBoxRow):
                                       GObject.TYPE_NONE, ()),
         'button_info_clicked': (GObject.SIGNAL_RUN_FIRST,
                                 GObject.TYPE_NONE, ()),
-        'button_download_clicked': (GObject.SIGNAL_RUN_FIRST,
-                                    GObject.TYPE_NONE, ()),
         'button_listened_clicked': (GObject.SIGNAL_RUN_FIRST,
                                     GObject.TYPE_NONE, ()),
         'end': (GObject.SIGNAL_RUN_FIRST, GObject.TYPE_NONE, ()),
@@ -168,62 +166,21 @@ class ListBoxRowWithData(Gtk.ListBoxRow):
         self.set_audio(audio)
 
     def can_play(self):
-        return (self.is_downloading is False and
-                self.audio['downloaded'] is True)
+        return True
 
     def click_button_play(self):
-        if self.audio['downloaded'] is True:
-            self.emit('button_play_pause_clicked')
+        self.emit('button_play_pause_clicked')
 
     def on_button_clicked(self, widget, button_name):
         if button_name == 'info':
             self.emit('button_info_clicked')
         elif button_name == 'play_pause':
             self.emit('button_play_pause_clicked')
-        elif button_name == 'download':
-            self.emit('button_download_clicked')
-            self.download.set_from_pixbuf(LWAIT)
         elif button_name == 'listened':
             self.emit('button_listened_clicked')
 
     def emit(self, *args):
         GLib.idle_add(GObject.GObject.emit, self, *args)
-
-    def set_downloading(self, downloading):
-        self.is_downloading = downloading
-        if downloading is True:
-            self.play_pause.set_from_animation(DOWNLOAD_ANIM)
-        else:
-            if self.audio['downloaded'] is True:
-                if self.is_playing is True:
-                    self.play_pause.set_from_pixbuf(PAUSE)
-                else:
-                    self.play_pause.set_from_pixbuf(PLAY)
-            else:
-                self.play_pause.set_from_pixbuf(PLAY)
-
-    def set_downloaded(self, downloaded):
-        '''
-        if downloaded is False:
-            extension = self.audio['ext']
-            audio_id = self.audio['display_id']
-            filein = os.path.join(
-                comun.AUDIO_DIR,
-                '{0}.{1}'.format(audio_id, extension))
-            fileout = os.path.join(
-                comun.AUDIO_DIR,
-                '{0}.{1}'.format(audio_id, 'ogg'))
-            if os.path.exists(filein):
-                os.remove(filein)
-            if os.path.exists(fileout):
-                os.remove(fileout)
-        '''
-        self.audio['downloaded'] = downloaded
-        self.button_play_pause.set_sensitive(downloaded)
-        if downloaded is True:
-            self.download.set_from_pixbuf(LDELETE)
-        else:
-            self.download.set_from_pixbuf(LDOWNLOAD)
 
     def set_playing(self, playing):
         print('id', self.index, 'is_playing', playing)

@@ -50,7 +50,7 @@ from .player import Player
 from .player import Status
 from .configurator import Configuration
 from .listboxrowwithdata import ListBoxRowWithData
-from .async import async_function
+from .fsync import fsync_function
 from .utils import from_remote_image_to_base64
 from .utils import get_thumbnail_filename_for_audio
 from .youtube_utils import resolve_youtube_url
@@ -126,7 +126,7 @@ class MainWindow(Gtk.ApplicationWindow):
         self.player.connect('stopped', self.on_player_stopped)
 
         DBusGMainLoop(set_as_default=True)
-        self.sound_menu = SoundMenuControls('YOAUP')
+        self.sound_menu = SoundMenuControls('LPLAYER')
         self.sound_menu._sound_menu_is_playing = self._sound_menu_is_playing
         self.sound_menu._sound_menu_play = self._sound_menu_play
         self.sound_menu._sound_menu_pause = self._sound_menu_pause
@@ -808,7 +808,7 @@ class MainWindow(Gtk.ApplicationWindow):
 
             self.get_root_window().set_cursor(DEFAULT_CURSOR)
 
-        @async_function(on_done=on_add_track_in_thread_done)
+        @fsync_function(on_done=on_add_track_in_thread_done)
         def do_add_track_in_thread(url):
             result = resolve_youtube_url(url)
             if result is not None:

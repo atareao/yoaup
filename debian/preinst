@@ -1,1 +1,1 @@
-add-apt-repository ppa:nilarimogard/webupd8
+add-apt-repository -y ppa:nilarimogard/webupd8

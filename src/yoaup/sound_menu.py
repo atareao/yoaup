@@ -15,14 +15,16 @@
 # with this program.  If not, see <http://www.gnu.org/licenses/>.
 # END LICENSE
 
-"""Contains SoundMenuControls, A class to make it easy to integrate with the Ubuntu Sound Menu.
+"""Contains SoundMenuControls, A class to make it easy to integrate with the
+Ubuntu Sound Menu.
 
 In order for a media player to appear in the sonud menu, it must have
 a desktop file in /usr/share/applications. For example, for a media player
-named "simple" player, there must be desktop file /usr/share/applications/simple-player.desktop
+named "simple" player, there must be desktop file /usr/share/applications/
+simple-player.desktop
 
-The desktop file must specify that it is indeed a media player. For example, simple-player.desktop
-might look like the follwing:
+The desktop file must specify that it is indeed a media player. For example,
+simple-player.desktop might look like the follwing:
 [Desktop Entry]
 Name=Simple Player
 Comment=SimplePlayer application
@@ -31,7 +33,8 @@ Exec=simple-player
 Icon=simple-player
 Terminal=false
 Type=Application
-MimeType=application/x-ogg;application/ogg;audio/x-vorbis+ogg;audio/x-scpls;audio/x-mp3;audio/x-mpeg;audio/mpeg;audio/x-mpegurl;audio/x-flac;
+MimeType=application/x-ogg;application/ogg;audio/x-vorbis+ogg;audio/x-scpls;
+audio/x-mp3;audio/x-mpeg;audio/mpeg;audio/x-mpegurl;audio/x-flac;
 
 In order for the sound menu to run, a dbus loop must be running before
 the player is created and before the gtk. mainloop is run. you can add
@@ -53,7 +56,7 @@ Functions and properties starting with capitalize letters, such as
 functions and properties are not designed to be called directly
 or overriden by application code, only the Sound Menu.
 
-Other functions are designed to be called as needed by the 
+Other functions are designed to be called as needed by the
 implementation to inform the Sound Menu of changes. Thse functions
 include signal_playing, signal_paused, and song_changed.
 
@@ -76,15 +79,16 @@ sound_menu.signal_playing()
 sound_menu.signal_paused()
 
 #whent the song is changed from the application,
-#use song_changed to inform the Ubuntu Sound Menu 
+#use song_changed to inform the Ubuntu Sound Menu
 sound_menu.song_changed(artist, album, song_title)
 
 Configuring
-SoundMenuControls does not come with any stock behaviors, so it 
+SoundMenuControls does not come with any stock behaviors, so it
 cannot be configured
 
 Extending
-SoundMenuControls can be used as a base class with single or multiple inheritance.
+SoundMenuControls can be used as a base class with single or multiple
+inheritance.
 
 _sound_menu_next
 _sound_menu_previous
@@ -100,8 +104,8 @@ import dbus.service
 
 class SoundMenuControls(dbus.service.Object):
     """
-    SoundMenuControls - A class to make it easy to integrate with the Ubuntu Sound Menu.
-
+    SoundMenuControls - A class to make it easy to integrate with the Ubuntu
+    Sound Menu.
     """
 
     def __init__(self, desktop_name):
@@ -125,7 +129,8 @@ class SoundMenuControls(dbus.service.Object):
 
         self.song_changed()
 
-    def song_changed(self, artists=None, album=None, title=None, album_art=None):
+    def song_changed(self, artists=None, album=None, title=None,
+                     album_art=None):
         """song_changed - sets the info for the current song.
 
         This method is not typically overriden. It should be called
@@ -179,7 +184,8 @@ class SoundMenuControls(dbus.service.Object):
         raise NotImplementedError("""@dbus.service.method('org.mpris.MediaPlayer2') Raise
                                       is not implemented by this player.""")
 
-    @dbus.service.method(dbus.PROPERTIES_IFACE, in_signature='ss', out_signature='v')
+    @dbus.service.method(dbus.PROPERTIES_IFACE, in_signature='ss',
+                         out_signature='v')
     def Get(self, interface, prop):
         """Get
 
@@ -206,7 +212,8 @@ class SoundMenuControls(dbus.service.Object):
         my_prop = self.__getattribute__(prop)
         my_prop = value
 
-    @dbus.service.method(dbus.PROPERTIES_IFACE, in_signature='s', out_signature='a{sv}')
+    @dbus.service.method(dbus.PROPERTIES_IFACE, in_signature='s',
+                         out_signature='a{sv}')
     def GetAll(self, interface):
         """GetAll
 
@@ -369,15 +376,16 @@ class SoundMenuControls(dbus.service.Object):
 
     def signal_playing(self):
         """signal_playing - Tell the Sound Menu that the player has
-        started playing. Implementations many need to call this function in order
-        to keep the Sound Menu in synch.
+        started playing. Implementations many need to call this function in
+        order to keep the Sound Menu in synch.
 
         arguments:
             none
 
         """
         self.__playback_status = "Playing"
-        d = dbus.Dictionary({"PlaybackStatus": self.__playback_status, "Metadata": self.__meta_data},
+        d = dbus.Dictionary({"PlaybackStatus": self.__playback_status,
+                            "Metadata": self.__meta_data},
                             "sv", variant_level=1)
         self.PropertiesChanged("org.mpris.MediaPlayer2.Player", d, [])
 
@@ -397,10 +405,10 @@ class SoundMenuControls(dbus.service.Object):
         self.PropertiesChanged("org.mpris.MediaPlayer2.Player", d, [])
 
     def _sound_menu_is_playing(self):
-        """_sound_menu_is_playing         
+        """_sound_menu_is_playing
 
-        Check if the the player is playing,.        
-        Implementations should overrirde this function 
+        Check if the the player is playing.
+        Implementations should overrirde this function
         so that the Sound Menu can check whether to display
         Play or Pause functionality.
 
@@ -420,10 +428,10 @@ class SoundMenuControls(dbus.service.Object):
     def _sound_menu_pause(self):
         """_sound_menu_pause
 
-        Reponds to the Sound Menu when the user has click the 
+        Reponds to the Sound Menu when the user has click the
         Pause button.
 
-        Implementations should overrirde this function 
+        Implementations should overrirde this function
         to pause playback when called.
 
         The default implementation of this function does nothing
@@ -441,11 +449,10 @@ class SoundMenuControls(dbus.service.Object):
     def _sound_menu_play(self):
         """_sound_menu_play
 
-        Reponds to the Sound Menu when the user has click the 
-        Play button.
+        Reponds to the Sound Menu when the user has click the Play button.
 
-        Implementations should overrirde this function 
-        to play playback when called.
+        Implementations should overrirde this function to play playback when
+        called.
 
         The default implementation of this function does nothing
 
@@ -470,4 +477,33 @@ class SoundMenuControls(dbus.service.Object):
 
         """
 
+        pass
+
+    @dbus.service.method('org.mpris.MediaPlayer2.Player')
+    def Seek(self, x):
+        """Seeek
+
+        A dbus signal handler for the Previous signal. Do no override this
+        function directly. Rather, overide _sound_menu_previous. This
+        function is typically only called by the Sound Menu, not directly
+        from code.
+
+        """
+
+        self._sound_menu_seek(x)
+
+    def _sound_menu_seek(self, x):
+        """_sound_menu_seek
+
+        This function is called when the user has clicked
+        the previous button in the Sound Indicator. Implementations
+        should overrirde this function in order to a function to
+        advance to the next track. Implementations should call
+        song_changed() and  sound_menu.signal_playing() in order to
+        keep the song information in sync.
+
+        The default implementation of this function has no effect.
+
+
+        """
         pass
